@@ -1,5 +1,6 @@
 {
   "accentColor": "",
-  "theme": "moonstone",
-  "cssTheme": "Solarized"
+  "theme": "system",
+  "cssTheme": "Solarized",
+  "textFontFamily": "Monaco"
 }
