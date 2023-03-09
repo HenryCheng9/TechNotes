@@ -26,6 +26,8 @@ rate limiter 是对某个系统做限流的一层组件，该组件可以避免�
 
 首先在 bucket 中预先定义好 token 的总量，当有请求来的时候，如果桶内有 token，就消耗一个 token，该请求可以进入，否则的话请求就被拒绝。在固定的时间内会向桶内重新添加一定量的 token，后续的请求以同样的策略决定是否进入系统。
 
+![](Pasted%20image%2020230310004840.png)
+
 因此该算法有两个变量：
 - **Bucket size**: bucket 可以容纳 token 的最大数量
 - **Refill rate**: 每秒钟往 bucket 中添加的 token 数量
@@ -105,6 +107,20 @@ type Reservation struct {
 
 > 为什么 Reservation 中又有一个 Limiter？
 
+
+# Advanced
+
+> [**Hierarchical token bucket**](https://en.wikipedia.org/wiki/Token_bucket)
+> 
+> The hierarchical token bucket (HTB) is a faster replacement for the [class-based queueing](https://en.wikipedia.org/wiki/Class-based_queueing "Class-based queueing") (CBQ) [queuing discipline](https://en.wikipedia.org/wiki/Queuing_discipline "Queuing discipline") in [Linux](https://en.wikipedia.org/wiki/Linux "Linux").[[6]](https://en.wikipedia.org/wiki/Token_bucket#cite_note-Linux_HTB-6) It is useful to limit a client's [download](https://en.wikipedia.org/wiki/Download "Download")/[upload](https://en.wikipedia.org/wiki/Upload "Upload") rate so that the limited client cannot saturate the total bandwidth.
+> 
+> Conceptually, HTB is an arbitrary number of token buckets arranged in a hierarchy. The primary egress queuing discipline (qdisc) on any device is known as the root qdisc. The root qdisc will contain one class. This single HTB class will be set with two parameters, a rate and a ceil. These values should be the same for the top-level class, and will represent the total available bandwidth on the link.
+> 
+> In HTB, rate means the guaranteed bandwidth available for a given class and ceil is short for ceiling, which indicates the maximum bandwidth that class is allowed to consume. Any bandwidth used between rate and ceil is borrowed from a parent class, hence the suggestion that rate and ceil be the same in the top-level class.
+> 
+> Hierarchical Token Bucket implements a classful queuing mechanism for the Linux traffic control system, and provides rate and ceil to allow the user to control the absolute bandwidth to particular classes of traffic as well as indicate the ratio of distribution of bandwidth when extra bandwidth become available(up to ceil).
+> 
+> When choosing the bandwidth for a top-level class, traffic shaping only helps at the bottleneck between the LAN and the Internet. Typically, this is the case in home and office network environments, where an entire LAN is serviced by a DSL or [T1](https://en.wikipedia.org/wiki/T-carrier#Transmission_System_1 "T-carrier") connection.
 
 
 # References
