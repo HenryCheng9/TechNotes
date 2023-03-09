@@ -110,7 +110,7 @@ type Reservation struct {
 
 # Advanced
 
-> [**Hierarchical token bucket**](https://en.wikipedia.org/wiki/Token_bucket)
+> [**Hierarchical token bucket**](https://en.wikipedia.org/wiki/Token_bucket#Hierarchical_token_bucket)
 > 
 > The hierarchical token bucket (HTB) is a faster replacement for the [class-based queueing](https://en.wikipedia.org/wiki/Class-based_queueing "Class-based queueing") (CBQ) [queuing discipline](https://en.wikipedia.org/wiki/Queuing_discipline "Queuing discipline") in [Linux](https://en.wikipedia.org/wiki/Linux "Linux").[[6]](https://en.wikipedia.org/wiki/Token_bucket#cite_note-Linux_HTB-6) It is useful to limit a client's [download](https://en.wikipedia.org/wiki/Download "Download")/[upload](https://en.wikipedia.org/wiki/Upload "Upload") rate so that the limited client cannot saturate the total bandwidth.
 > 
@@ -128,3 +128,4 @@ type Reservation struct {
 - [Rate-limiting strategies and techniques - Google](https://cloud.google.com/architecture/rate-limiting-strategies-techniques)
 - System Design Interview: An Insider’s Guide - Chapter 4: Design a rate limiter
 - [rate package](https://pkg.go.dev/golang.org/x/time/rate)
+- [Token bucket - Wikipedia](https://en.wikipedia.org/wiki/Token_bucket#Hierarchical_token_bucket)
