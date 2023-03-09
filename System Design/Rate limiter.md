@@ -6,7 +6,7 @@
 
 rate limiter 是对某个系统做限流的一层组件，该组件可以避免过多的请求进入某个系统。通常来说通过一个预设的值来设定好期望的限定流量，当流量超过该值的时候，通过不同的策略（可以返回，也可以阻塞等待）来达到限流的目的。
 
-![](Pasted%20image%2020230309224529.png)
+![](Pasted%20image%2020230309234621.png)
 
 [Rate-limiting strategies and techniques - Google](https://cloud.google.com/architecture/rate-limiting-strategies-techniques) 这片文章中提到的 rate limiter 的目的有四个：
 - Preventing resource starvation
@@ -19,6 +19,20 @@ rate limiter 是对某个系统做限流的一层组件，该组件可以避免�
 -   **Leaky bucket**: A [leaky bucket](https://wikipedia.org/wiki/Leaky_bucket) is similar to a token bucket, but the rate is limited by the amount that can drip or leak out of the bucket. This technique recognizes that the system has some degree of finite capacity to hold a request until the service can act on it; any extra simply spills over the edge and is discarded. This notion of buffer capacity (but not necessarily the use of leaky buckets) also applies to components adjacent to your service, such as load balancers and disk I/O buffers.
 -   **Fixed window**: Fixed-window limits—such as 3,000 requests per hour or 10 requests per day—are easy to state, but they are subject to spikes at the edges of the window, as available quota resets. Consider, for example, a limit of 3,000 requests per hour, which still allows for a spike of all 3,000 requests to be made in the first minute of the hour, which might overwhelm the service.
 -   **Sliding window**: Sliding windows have the benefits of a fixed window, but the rolling window of time smooths out bursts. Systems such as Redis facilitate this technique with expiring keys.
+
+## Token bucket
+
+该方法是最主流的一种策略。
+
+首先在 bucket 中预先定义好 token 的总量，当有请求来的时候，如果桶内有 token，就消耗一个 token，该请求可以进入，否则的话请求就被拒绝。在固定的时间内会向桶内重新添加一定量的 token，后续的请求以同样的策略决定是否进入系统。
+
+因此该算法有两个变量：
+- **Bucket size**: bucket 可以容纳 token 的最大数量
+- **Refill rate**: 每秒钟往 bucket 中添加的 token 数量
+
+**那么在一个系统中需要多少个 Bucket 呢？**
+
+这个数字取决于系统设计，如果需要对不同的 API 进行不同的限流，那么每个 API 都要有一个 bucket，但如果是对维度更大的粒度进行限流，就可以在全局上设计一个 bucket 即可。
 
 # Implement in Golang
 
@@ -73,7 +87,7 @@ type Limit float64
 
 该 Limiter 的主要方法有三个，Allow, Reserve, Wait，对应了三种不同的限流策略：
 - allow 表示允许当前事件（请求）发生
-- reserve 表示提前预支 token 给当前事件，
+- reserve 表示提前预支 token 给当前事件
 - wait 表示对当前事件阻塞
 
 ```go
